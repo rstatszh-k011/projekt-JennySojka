@@ -1,0 +1,81 @@
+---
+title: "index"
+format: html
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+read_csv(here::here("daten/raw/EDB_16_18_Jh_Stand_2024_05_14.csv"))
+```
+
+# Einleitung
+
+## Daten
+
+Die Datensammlung enthält in standardisierter Kurzform **alle Eheeinträge, die in den überlieferten Kirchenbüchern der Kirchgemeinden des Kantons Zürich seit der Reformation verzeichnet sind**.
+
+Siehe auch: <https://archives-quickaccess.ch/search/stazh/edb>\
+\
+Die Datensammlung wurde ursprünglich von einem privaten Genealogen erstellt. Nach dem Erwerb durch das Staatsarchiv wurden die Einträge kontrolliert, ergänzt und 2015 und 2019 in zwei Schritten online publiziert.
+
+**Die Schreibweise der Familiennamen und der Vornamen sowie der Ortsnamen wurde normalisiert**, damit sie recherchierbar sind. Eine Autocomplete-Funktion unterstützt die Recherche zusätzlich. Die **Originalschreibweise** ist nur in ausgewählten Fällen dokumentiert (recherchierbar über die Suche im Volltext). **Namensvarianten** sind meist unter einer einzigen Form zusammengefasst, zum Beispiel einheitlich Meier, Bosshard oder Weiss auch für Familien, deren Name heute amtlich Meyer, Bosshart oder Wyss lautet.\
+\
+Die meisten Einträge sind knapp gehalten und umfassen neben dem Datum der Eheschliessung oder ihrer Verkündung nur gerade die Namen der Brautleute. Teilweise sind **Herkunftsorte** angegeben (vgl. die entsprechenden Suchfelder), zuweilen auch **Berufe oder Amtsfunktionen** (recherchierbar über die Suche im Volltext). Aufschlussreich sind **Angaben über besondere Verhältnisse**, wenn Gemeinden wegen der Armut von Heiratswilligen intervenierten oder wenn es wegen Verwandtschaft eine Bewilligung des Ehegerichts brauchte, die bereits bei gemeinsamen Urgrosseltern erforderlich war (ebenfalls recherchierbar über die Suche im Volltext).
+
+Das csv bzw. xlsx-File enthält folgende Felder:
+
+-   **Signatur**
+
+-   **Nachname_Mann**
+
+-   **Vorname_Mann**
+
+-   **Herkunft_Mann**
+
+-   **HLS_Artikel_Mann** *(neu mit Version 6.0: Weblink zum Artikel im Historischen Lexikon der Schweiz (HLS), sofern vorhanden)*
+
+-   **GND_Mann** *(neu mit Version 6.0: Weblink zum Eintrag in der Gemeinsamen Normdatei (GND), sofern vorhanden)*
+
+-   **Nachname_Frau**
+
+-   **Vorname_Frau**
+
+-   **Herkunft_Frau**
+
+-   **HLS_Artikel_Frau** *(neu mit Version 6.0: Weblink zum Artikel im Historischen Lexikon der Schweiz (HLS), sofern vorhanden)*
+
+-   **GND_Frau** *(neu mit Version 6.0: Weblink zum Eintrag in der Gemeinsamen Normdatei (GND), sofern vorhanden)*
+
+-   **Zusatzinfo_Mann** *(Zusatzinformationen zum Mann können auch den Eheeintrag im Allgemeinen betreffen)*
+
+-   **Zusatzinfo_Frau**
+
+-   **Datum** *(alle Daten bis und mit 1700 sind gemäss julianischem, danach gemäss gregorianischem Kalender; mit "ca." wird angegeben, wenn die Datierung unsicher ist; mit "-" wird angegeben, wenn sich der Eheeintrag innerhalb einer Datumsperiode befindet)*
+
+-   **Datum_von** *(Datum standardisiert (YYYY-MM-DD); alle Daten bis und mit 1700 sind gemäss julianischem, danach gemäss gregorianischem Kalender)*
+
+-   **Datum_bis** *(Datum standardisiert (YYYY-MM-DD); alle Daten bis und mit 1700 sind gemäss julianischem, danach gemäss gregorianischem Kalender)*
+
+-   **Kirchgemeinde**
+
+-   **Band** *(Seite des Eheeintrags im Band, bzw. Kirchbuch)*
+
+-   **Webseite** *(Eintrag im Archivkatalog)*
+
+-   **ID** *(Identifikator zum Abgleich mit dem Archivkatalog)*
+
+## Analyseziele
+
+# Daten Aufbereitung
+
+```{r}
+
+Ehedaten_16_bis_18Jh <- read_csv("/cloud/project/daten/raw/EDB_16_18_Jh_Stand_2024_05_14.csv")
+```
+
+# Daten Visualisierung
