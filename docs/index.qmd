@@ -7,10 +7,15 @@ editor_options:
 
 ```{r}
 library(tidyverse)
+library(readr)
+library(here)
+library(statR)
+
 ```
 
 ```{r}
 read_csv(here::here("daten/raw/EDB_16_18_Jh_Stand_2024_05_14.csv"))
+
 ```
 
 # Einleitung
@@ -25,57 +30,73 @@ Die Datensammlung wurde ursprünglich von einem privaten Genealogen erstellt. Na
 
 **Die Schreibweise der Familiennamen und der Vornamen sowie der Ortsnamen wurde normalisiert**, damit sie recherchierbar sind. Eine Autocomplete-Funktion unterstützt die Recherche zusätzlich. Die **Originalschreibweise** ist nur in ausgewählten Fällen dokumentiert (recherchierbar über die Suche im Volltext). **Namensvarianten** sind meist unter einer einzigen Form zusammengefasst, zum Beispiel einheitlich Meier, Bosshard oder Weiss auch für Familien, deren Name heute amtlich Meyer, Bosshart oder Wyss lautet.\
 \
-Die meisten Einträge sind knapp gehalten und umfassen neben dem Datum der Eheschliessung oder ihrer Verkündung nur gerade die Namen der Brautleute. Teilweise sind **Herkunftsorte** angegeben (vgl. die entsprechenden Suchfelder), zuweilen auch **Berufe oder Amtsfunktionen** (recherchierbar über die Suche im Volltext). Aufschlussreich sind **Angaben über besondere Verhältnisse**, wenn Gemeinden wegen der Armut von Heiratswilligen intervenierten oder wenn es wegen Verwandtschaft eine Bewilligung des Ehegerichts brauchte, die bereits bei gemeinsamen Urgrosseltern erforderlich war (ebenfalls recherchierbar über die Suche im Volltext).
-
-Das csv bzw. xlsx-File enthält folgende Felder:
-
--   **Signatur**
-
--   **Nachname_Mann**
-
--   **Vorname_Mann**
-
--   **Herkunft_Mann**
-
--   **HLS_Artikel_Mann** *(neu mit Version 6.0: Weblink zum Artikel im Historischen Lexikon der Schweiz (HLS), sofern vorhanden)*
-
--   **GND_Mann** *(neu mit Version 6.0: Weblink zum Eintrag in der Gemeinsamen Normdatei (GND), sofern vorhanden)*
-
--   **Nachname_Frau**
-
--   **Vorname_Frau**
-
--   **Herkunft_Frau**
-
--   **HLS_Artikel_Frau** *(neu mit Version 6.0: Weblink zum Artikel im Historischen Lexikon der Schweiz (HLS), sofern vorhanden)*
-
--   **GND_Frau** *(neu mit Version 6.0: Weblink zum Eintrag in der Gemeinsamen Normdatei (GND), sofern vorhanden)*
-
--   **Zusatzinfo_Mann** *(Zusatzinformationen zum Mann können auch den Eheeintrag im Allgemeinen betreffen)*
-
--   **Zusatzinfo_Frau**
-
--   **Datum** *(alle Daten bis und mit 1700 sind gemäss julianischem, danach gemäss gregorianischem Kalender; mit "ca." wird angegeben, wenn die Datierung unsicher ist; mit "-" wird angegeben, wenn sich der Eheeintrag innerhalb einer Datumsperiode befindet)*
-
--   **Datum_von** *(Datum standardisiert (YYYY-MM-DD); alle Daten bis und mit 1700 sind gemäss julianischem, danach gemäss gregorianischem Kalender)*
-
--   **Datum_bis** *(Datum standardisiert (YYYY-MM-DD); alle Daten bis und mit 1700 sind gemäss julianischem, danach gemäss gregorianischem Kalender)*
-
--   **Kirchgemeinde**
-
--   **Band** *(Seite des Eheeintrags im Band, bzw. Kirchbuch)*
-
--   **Webseite** *(Eintrag im Archivkatalog)*
-
--   **ID** *(Identifikator zum Abgleich mit dem Archivkatalog)*
-
-## Analyseziele
+Analyseziele
 
 # Daten Aufbereitung
 
 ```{r}
+Ehedaten_16_bis_18Jh <- read_csv(here::here("daten/raw/EDB_16_18_Jh_Stand_2024_05_14.csv"))
+```
 
-Ehedaten_16_bis_18Jh <- read_csv("/cloud/project/daten/raw/EDB_16_18_Jh_Stand_2024_05_14.csv")
+```         
+```
+
+```{r}
+Ehedaten_16_bis_18Jh <- Ehedaten_16_bis_18Jh |> 
+  select(Nachname_Mann, Vorname_Mann, Nachname_Frau, Vorname_Frau, Herkunft_Mann, Herkunft_Frau, Zusatzinfo_Mann, Zusatzinfo_Frau, Datum_Von, Kirchgemeinde, ID)
+
+Ehedaten <- Ehedaten_16_bis_18Jh |> 
+  rename(Datum = Datum_Von)
+
+```
+
+```{r}
+Kirchgemeinden <- Ehedaten |>
+  count(Kirchgemeinde) |> 
+  arrange(desc(n))
+```
+
+```{r}
+Ehedaten |> 
+  distinct(Vorname_Frau)
+
+Frau_Vornamen <- Ehedaten |> 
+  count(Vorname_Frau)
+
+Mann_Vornamen <- Ehedaten |> 
+  count(Vorname_Mann)
 ```
 
 # Daten Visualisierung
+
+Welches sind die Top 15 der Vornamen von Frauen bzw. Männern?
+
+Frauen:
+
+```{r}
+TopFrau <- Frau_Vornamen |> 
+  group_by(Vorname_Frau) |> 
+  summarise(Anzahl = sum(n)) |> 
+  arrange(desc(Anzahl)) |> 
+  top_n(15, Anzahl) |> 
+  mutate(Prozent = Anzahl/sum(Anzahl)*100)
+
+ggplot(data = TopFrau,
+       mapping = aes(x = Prozent,
+                     y = reorder(Vorname_Frau, Anzahl)))+
+  
+  geom_col()+
+  labs(title = "Die 15 häufigsten Vornamen von Frauen",
+       subtitle = "16. - 18. Jh.")
+```
+
+Männer:
+
+```{r}
+
+TopMann <- Mann_Vornamen |> 
+  group_by(Vorname_Mann) |> 
+  summarise(Anzahl = sum(n)) |> 
+  arrange(desc(Anzahl)) |> 
+  top_n(10, Anzahl)
+```
