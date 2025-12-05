@@ -9,7 +9,7 @@ editor_options:
 library(tidyverse)
 library(readr)
 library(here)
-library(statR)
+
 
 ```
 
