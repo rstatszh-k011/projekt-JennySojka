@@ -1,14 +1,23 @@
 ---
-title: "index"
-format: html
+title: "Abschlussprojekt zu Eheschliessungen vom 16. bis 18. Jahrhundert"
+format:
+  html:
+    embed-resources: true
+    toc: true
+execute:
+  warning: false
 editor_options: 
   chunk_output_type: console
+editor: visual
 ---
 
 ```{r}
 library(tidyverse)
 library(readr)
 library(here)
+library(statR)
+library(ggthemes)
+library(gt)
 
 
 ```
@@ -20,46 +29,37 @@ read_csv(here::here("daten/raw/EDB_16_18_Jh_Stand_2024_05_14.csv"))
 
 # Einleitung
 
-## Daten
+Dieses Projekt entstand im Kontext der Weiterbildung "Statistics in R" vom Kanton Zürich. Es werden die Daten zu den "Eheschliessungen im Kanton Zürich vom 16. bis 18. Jahrhundert" (bereits OGD) mit R statistisch ausgewertet.
 
-Die Datensammlung enthält in standardisierter Kurzform **alle Eheeinträge, die in den überlieferten Kirchenbüchern der Kirchgemeinden des Kantons Zürich seit der Reformation verzeichnet sind**.
+# Daten
 
-Siehe auch: <https://archives-quickaccess.ch/search/stazh/edb>\
-\
-Die Datensammlung wurde ursprünglich von einem privaten Genealogen erstellt. Nach dem Erwerb durch das Staatsarchiv wurden die Einträge kontrolliert, ergänzt und 2015 und 2019 in zwei Schritten online publiziert.
+Die Datensammlung enthält in standardisierter Kurzform alle Eheeinträge, die in den überlieferten Kirchenbüchern der Kirchgemeinden des Kantons Zürich seit der Reformation verzeichnet sind. Die Datensammlung wurde ursprünglich von einem privaten Genealogen erstellt. Nach dem Erwerb durch das Staatsarchiv wurden die Einträge kontrolliert, ergänzt und 2015 und 2019 in zwei Schritten online publiziert (siehe auch: <https://archives-quickaccess.ch/search/stazh/edb>).\
 
-**Die Schreibweise der Familiennamen und der Vornamen sowie der Ortsnamen wurde normalisiert**, damit sie recherchierbar sind. Eine Autocomplete-Funktion unterstützt die Recherche zusätzlich. Die **Originalschreibweise** ist nur in ausgewählten Fällen dokumentiert (recherchierbar über die Suche im Volltext). **Namensvarianten** sind meist unter einer einzigen Form zusammengefasst, zum Beispiel einheitlich Meier, Bosshard oder Weiss auch für Familien, deren Name heute amtlich Meyer, Bosshart oder Wyss lautet.\
-\
-Analyseziele
-
-# Daten Aufbereitung
+### Daten laden
 
 ```{r}
 Ehedaten_16_bis_18Jh <- read_csv(here::here("daten/raw/EDB_16_18_Jh_Stand_2024_05_14.csv"))
 ```
 
-```         
-```
+### Daten aufbereiten
 
 ```{r}
 Ehedaten_16_bis_18Jh <- Ehedaten_16_bis_18Jh |> 
   select(Nachname_Mann, Vorname_Mann, Nachname_Frau, Vorname_Frau, Herkunft_Mann, Herkunft_Frau, Zusatzinfo_Mann, Zusatzinfo_Frau, Datum_Von, Kirchgemeinde, ID)
 
 Ehedaten <- Ehedaten_16_bis_18Jh |> 
-  rename(Datum = Datum_Von)
+  rename(Datum = Datum_Von) |>
+  mutate(Vorname_Frau = if_else(Vorname_Frau == "anna", "Anna", Vorname_Frau))
 
 ```
 
-```{r}
-Kirchgemeinden <- Ehedaten |>
-  count(Kirchgemeinde) |> 
-  arrange(desc(n))
-```
+# Ergebnisse
+
+### Top 15 Vornamen
+
+Erstellung von Tabellen in denen die Vornamen von Frauen bzw. Männern jeweils separat gelistet werden.
 
 ```{r}
-Ehedaten |> 
-  distinct(Vorname_Frau)
-
 Frau_Vornamen <- Ehedaten |> 
   count(Vorname_Frau)
 
@@ -67,13 +67,13 @@ Mann_Vornamen <- Ehedaten |>
   count(Vorname_Mann)
 ```
 
-# Daten Visualisierung
-
-Welches sind die Top 15 der Vornamen von Frauen bzw. Männern?
-
-Frauen:
+Die fünfzehn beliebtesten Vornamen für Frauen werden in @fig-top_frauennamen dargestellt.
 
 ```{r}
+#| label: fig-top_frauennamen
+#| fig-cap: "Die 15 beliebtesten Vornamen für Frauen im 16. - 18. Jh."
+
+
 TopFrau <- Frau_Vornamen |> 
   group_by(Vorname_Frau) |> 
   summarise(Anzahl = sum(n)) |> 
@@ -82,21 +82,105 @@ TopFrau <- Frau_Vornamen |>
   mutate(Prozent = Anzahl/sum(Anzahl)*100)
 
 ggplot(data = TopFrau,
-       mapping = aes(x = Prozent,
+       mapping = aes(x = Anzahl,
                      y = reorder(Vorname_Frau, Anzahl)))+
   
-  geom_col()+
+  geom_col(fill = zhpal$zhwebdataviz[9], width = 0.8)+
+    theme_stat()+
+    theme(panel.grid.major.y = element_blank())+
   labs(title = "Die 15 häufigsten Vornamen von Frauen",
-       subtitle = "16. - 18. Jh.")
+       subtitle = "16. - 18. Jh.",
+       y = "")
 ```
 
-Männer:
+Die fünfzehn beliebtesten Vornamen für Männer werden in @fig-top_maennernamen dargestellt.
 
 ```{r}
+#| label: fig-top_maennernamen
+#| fig-cap: "Die 15 beliebtesten Vornamen für Männer im 16. - 18. Jh."
 
 TopMann <- Mann_Vornamen |> 
   group_by(Vorname_Mann) |> 
   summarise(Anzahl = sum(n)) |> 
   arrange(desc(Anzahl)) |> 
-  top_n(10, Anzahl)
+  top_n(15, Anzahl) |> 
+  mutate(Prozent = Anzahl/sum(Anzahl)*100)
+
+ggplot(data = TopMann,
+       mapping = aes(x = Anzahl,
+                     y = reorder(Vorname_Mann, Anzahl)))+
+  
+  geom_col(fill = zhpal$zhwebdataviz[2], width = 0.8)+
+    theme_stat()+
+    theme(panel.grid.major.y = element_blank())+
+  labs(title = "Die 15 häufigsten Vornamen von Männern",
+       subtitle = "16. - 18. Jh.",
+       y = "")
 ```
+
+### Einmalige Vornamen von Frauen
+
+Alle Frauennamen, die nur ein einziges Mal vorkommen und keine Doppelnamen sind, werden in @tbl-frauennamen_einmalig anzeigt.\
+
+```{r}
+#| label: tbl-frauennamen_einmalig
+#| tbl-cap: "Vornamen von Frauen, die nur ein einziges Mal vorkommen. Doppelnamen sind ausgenommen."
+
+
+Einmalige_Vornamen_Frau <- Frau_Vornamen |> 
+  filter(!grepl("\\s", Vorname_Frau)) |>
+  filter(!grepl("[[:punct:]\\s]", Vorname_Frau)) |>
+  group_by(Vorname_Frau) |> 
+  summarise(Anzahl = sum(n)) |> 
+  filter(Anzahl == 1) |> 
+  select(Vorname_Frau) |> 
+  gt::gt()
+```
+
+### Beliebtheit der Wochentage für Eheschliessungen
+
+\
+An welchen Wochentagen jeweils pro Monat am meisten Ehen geschlossen worden sind, wird in @fig-ehen_wochentag gezeigt.
+
+```{r}
+Ehedaten_Datum <- Ehedaten |> 
+  mutate(Jahr = year(Datum),
+         Monat = month(Datum, label = TRUE, abbr = FALSE),
+         Wochentag = weekdays(Datum)) |> 
+  group_by(Monat, Wochentag) |> 
+  summarize(Anzahl = n()) |> 
+  mutate(Wochentag = factor(Wochentag,
+                            levels = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"), ordered = TRUE))
+  
+ 
+```
+
+```{r}
+#| label: fig-ehen_wochentag
+#| fig-cap: "Anzahl der Eheschliessungen pro Monat und Wochentag im 16. - 18. Jh."
+
+   ggplot(data = Ehedaten_Datum,
+         mapping = aes(x = Monat,
+                       y = Anzahl,
+                       group = Wochentag,
+                       color = Wochentag))+
+  
+  geom_line()+
+  geom_point()+
+     theme_stat()+
+     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+           legend.position = "right")+
+  labs(title = "Anzahl Eheschliessungen an Wochentagen pro Monat",
+       subtitle = "16. - 18. Jh. im Kanton Zürich",
+       x = NULL,
+       y = NULL)+
+     scale_color_manual(values = zhpal$zhdiagonal)
+```
+
+# Schlussfolgerungen
+
+-   asdf
+
+-   asdf
+
+-   asdf
