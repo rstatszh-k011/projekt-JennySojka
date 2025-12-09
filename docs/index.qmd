@@ -146,11 +146,9 @@ An welchen Wochentagen jeweils pro Monat am meisten Ehen geschlossen worden sind
 Ehedaten_Datum <- Ehedaten |> 
   mutate(Jahr = year(Datum),
          Monat = month(Datum, label = TRUE, abbr = FALSE),
-         Wochentag = weekdays(Datum)) |> 
+         Wochentag = wday(Datum, label = TRUE, abbr = FALSE)) |> 
   group_by(Monat, Wochentag) |> 
-  summarize(Anzahl = n()) |> 
-  mutate(Wochentag = factor(Wochentag,
-                            levels = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"), ordered = TRUE))
+  summarize(Anzahl = n())
   
  
 ```
