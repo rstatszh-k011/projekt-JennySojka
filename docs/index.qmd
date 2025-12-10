@@ -1,5 +1,8 @@
 ---
 title: "Abschlussprojekt zu Eheschliessungen vom 16. bis 18. Jahrhundert"
+subtitle: "In Kirchgemeinden des Kantons Zürich"
+author: "Jenny Sojka"
+date: 2025-12-10
 format:
   html:
     embed-resources: true
@@ -51,6 +54,13 @@ Ehedaten <- Ehedaten_16_bis_18Jh |>
   rename(Datum = Datum_Von) |>
   mutate(Vorname_Frau = if_else(Vorname_Frau == "anna", "Anna", Vorname_Frau))
 
+```
+
+### Daten speichern
+
+```{r}
+write_csv(x = Ehedaten, 
+          here::here("daten/processed/Ehedaten.csv"))
 ```
 
 # Ergebnisse
@@ -133,8 +143,10 @@ Einmalige_Vornamen_Frau <- Frau_Vornamen |>
   group_by(Vorname_Frau) |> 
   summarise(Anzahl = sum(n)) |> 
   filter(Anzahl == 1) |> 
-  select(Vorname_Frau) |> 
-  gt::gt()
+  select(Vorname_Frau)
+
+knitr::kable(Einmalige_Vornamen_Frau)
+
 ```
 
 ### Beliebtheit der Wochentage für Eheschliessungen
@@ -177,8 +189,10 @@ Ehedaten_Datum <- Ehedaten |>
 
 # Schlussfolgerungen
 
--   asdf
+-   Die meisten Frauen hiessen Anna, Elisabeth oder Barbara.
 
--   asdf
+-   Die meisten Männer hiessen Heinrich, Jakob, Hans Jakob oder Hans.
 
--   asdf
+-   In den 3 Jahrhunderten kommen bei den Frauen 100 Vornamen (ohne Doppelnamen) nur ein einziges Mal vor, d.h. ungefähr drei neue, innovative Vornamen pro Jahr.
+
+-   Geheiratet wurde unabhängig vom Monat am liebsten an einem Dienstag. Der Mittwoch ist durchgehend der unbeliebstete Wochentag.

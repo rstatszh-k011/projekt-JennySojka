@@ -1,1 +1,12 @@
 variable_name;beschreibung
+Nachname_Mann;enthält Nachname des Mannes in normalisierter Form
+Vorname_Mann;enthält Vorname des Mannes in normalisierter Form
+Nachname_Frau;enthält Nachname der Frau in normalisierter Form
+Vorname_Frau;enthält Vorname der Frau in normalisierter Form
+Herkunft Mann;enthält Herkunftsort des Mannes
+Herkunft Frau;enthält Herkunftsort der Frau
+Zusatzinfo Mann;enthält zusätzliche Informationen, die den Mann betreffen (besondere Verhältnisse, Berufe, Einwilligungen)
+Zusatzinfo Frau;enthält zusätzliche Informationen, die die Frau betreffen (besondere Verhältnisse, Berufe, Einwilligungen)
+Datum;enthält das Datum der Eheschliesung
+Kirchgemeinde;enthält Angaben zur zuständigen Kirchgemeinde
+ID;eindeutige Identifikationsnummer
