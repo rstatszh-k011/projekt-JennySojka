@@ -193,6 +193,6 @@ Ehedaten_Datum <- Ehedaten |>
 
 -   Die meisten Männer hiessen Heinrich, Jakob, Hans Jakob oder Hans.
 
--   In den 3 Jahrhunderten kommen bei den Frauen 100 Vornamen (ohne Doppelnamen) nur ein einziges Mal vor, d.h. ungefähr drei neue, innovative Vornamen pro Jahr.
+-   In den 3 Jahrhunderten kommen bei den Frauen 100 Vornamen (ohne Doppelnamen) nur ein einziges Mal vor, d.h. alle drei Jahre ein neuer, innovativer Vorname.
 
 -   Geheiratet wurde unabhängig vom Monat am liebsten an einem Dienstag. Der Mittwoch ist durchgehend der unbeliebstete Wochentag.
