@@ -189,9 +189,9 @@ Ehedaten_Datum <- Ehedaten |>
 
 # Schlussfolgerungen
 
--   Die meisten Frauen hiessen Anna, Elisabeth oder Barbara.
+-   Die häufigsten weiblichen Vornamen waren Anna, Elisabeth oder Barbara.
 
--   Die meisten Männer hiessen Heinrich, Jakob, Hans Jakob oder Hans.
+-   Die häufigsten männlichen Vornamen waren Heinrich, Jakob, Hans Jakob oder Hans.
 
 -   In den 3 Jahrhunderten kommen bei den Frauen 100 Vornamen (ohne Doppelnamen) nur ein einziges Mal vor, d.h. alle drei Jahre ein neuer, innovativer Vorname.
 
